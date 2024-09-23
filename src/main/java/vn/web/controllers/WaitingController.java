@@ -8,27 +8,30 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import vn.web.models.UserModel;
+import java.io.IOException;
 
-@WebServlet(name = "WaitingController", value = "/waiting")
+
+@WebServlet(urlPatterns = "/waiting")
 public class WaitingController extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if(session != null & session.getAttribute("account") != null) {
-            UserModel user = (UserModel) session.getAttribute("account");
-            request.setAttribute("username", user.getUsername());
-            if(user.getRoleid() == 2) {
-                response.sendRedirect(request.getContextPath() + "/manager/home");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/home");
-            }
-        } else {
-            response.sendRedirect(request.getContextPath() + "/login");
-        }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private static final long serialVersionUID = 6295128414131950435L;
 
-    }
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		if (session != null && session.getAttribute("account") != null) {
+			UserModel u = (UserModel) session.getAttribute("account");
+			req.setAttribute("username", u.getUsername());
+			if (u.getRoleId() == 1) {
+				resp.sendRedirect(req.getContextPath() + "/admin/home");
+			} else if (u.getRoleId() == 2) {
+				resp.sendRedirect(req.getContextPath() + "/manager/home");
+			} else {
+				resp.sendRedirect(req.getContextPath() + "/home");
+			}
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/login");
+		}
+	}
+
 }

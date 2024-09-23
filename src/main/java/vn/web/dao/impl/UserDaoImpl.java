@@ -12,106 +12,81 @@ import java.util.List;
 
 public class UserDaoImpl extends DBConnectMySQL implements IUserDao {
 
-	public Connection conn = null;
-	public PreparedStatement preparedStatement = null;
-	public ResultSet resultSet = null;
-
 	@Override
 	public List<UserModel> findAll() {
 		String sql = "SELECT * FROM users";
-		List<UserModel> users = new ArrayList<>();
-		try {
-			conn = super.getDatabaseConnection();
-			preparedStatement = conn.prepareStatement(sql);
-			resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				UserModel user = new UserModel();
-				user.setId(resultSet.getInt("id"));
-				user.setUsername(resultSet.getString("username"));
-				user.setPassword(resultSet.getString("password"));
-				user.setEmail(resultSet.getString("email"));
-				user.setFullname(resultSet.getString("fullname"));
-				user.setImages(resultSet.getString("images"));
-				users.add(user);
+		List<UserModel> list = new ArrayList<>();
+		try (Connection conn = super.getDatabaseConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet res = ps.executeQuery()) {
+
+			while (res.next()) {
+				list.add(new UserModel(res.getInt("id"), res.getString("username"), res.getString("password"),
+						res.getString("fullname"), res.getString("email"), res.getString("images"),
+						res.getInt("roleId"), res.getString("phone"), res.getDate("createDate")));
 			}
+			return list;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return users;
+		return list;
 	}
 
 	@Override
 	public UserModel findById(int id) {
-		String sql = "SELECT * FROM users WHERE id=?";
-		// UserModel users = new UserModel();
-		try {
-			conn = super.getDatabaseConnection();
-			preparedStatement = conn.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				UserModel user = new UserModel();
-				user.setId(resultSet.getInt("id"));
-				user.setUsername(resultSet.getString("username"));
-				user.setPassword(resultSet.getString("password"));
-				user.setEmail(resultSet.getString("email"));
-				user.setFullname(resultSet.getString("fullname"));
-				user.setImages(resultSet.getString("images"));
-				return user;
+		String sql = "SELECT * FROM users WHERE id = ?";
+		UserModel user = null;
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, id);
+			try (ResultSet res = ps.executeQuery()) {
+				if (res.next()) {
+					user = new UserModel(res.getInt("id"), res.getString("username"), res.getString("password"),
+							res.getString("fullname"), res.getString("email"), res.getString("images"),
+							res.getInt("roleId"), res.getString("phone"), res.getDate("createDate"));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return user;
 	}
 
 	@Override
 	public void insert(UserModel user) {
-		String sql = "INSERT INTO users(username, email, fullname, images, password) VALUES (?,?,?,?,?)";
-		// UserModel users = new UserModel ();
-		try {
-			conn = super.getDatabaseConnection();
-			preparedStatement = conn.prepareStatement(sql);
-			// preparedStatement.setInt(1,user.getId());
-			preparedStatement.setString(1, user.getUsername());
-			preparedStatement.setString(2, user.getEmail());
-			preparedStatement.setString(3, user.getFullname());
-			preparedStatement.setString(4, user.getImages());
-			preparedStatement.setString(5, user.getPassword());
+		String sqlInsert = "INSERT INTO users(username, password, fullname, email, images, roleid, phone, createDate) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+		try (Connection conn = super.getDatabaseConnection(); 
+				PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
 
-			preparedStatement.executeUpdate();
+			ps.setString(1, user.getUsername());
+			ps.setString(2, user.getPassword());
+			ps.setString(3, user.getFullName());
+			ps.setString(4, user.getEmail());
+			ps.setString(5, user.getImages());
+			ps.setInt(6, user.getRoleId());
+			ps.setString(7, user.getPhone());
+			ps.setDate(8, user.getCreateDate());
+			ps.executeUpdate();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
-	public void update(UserModel user) {
-		// TODO Auto-generated method stub
+	public UserModel findByUsername(String username) {
+		String sql = "SELECT * FROM users WHERE username = ?";
+		try (Connection conn = super.getDatabaseConnection(); 
+				PreparedStatement ps = conn.prepareStatement(sql);) {
 
-	}
-
-	public UserModel get(String username) {
-		String sql = "SELECT * FROM users WHERE username = ? ";
-		try {
-			conn = super.getDatabaseConnection();
-			preparedStatement = conn.prepareStatement(sql);
-			preparedStatement.setString(1, username);
-			resultSet = preparedStatement.executeQuery();
-			
-			while (resultSet.next()) {
-				UserModel user = new UserModel();
-				user.setId(resultSet.getInt("id"));
-				user.setUsername(resultSet.getString("username"));
-				user.setPassword(resultSet.getString("password"));
-				user.setImages(resultSet.getString("images"));
-				user.setFullname(resultSet.getString("fullname"));
-				user.setEmail(resultSet.getString("email"));
-				user.setRoleid(Integer.parseInt(resultSet.getString("roleid")));
-				user.setPhone(resultSet.getString("phone"));
-				user.setCreateDate(resultSet.getDate("createDate"));
-				return user;
+			ps.setString(1, username);
+			try (ResultSet res = ps.executeQuery()) {
+				if (res.next()) {
+					return new UserModel(res.getInt("id"), res.getString("username"), res.getString("password"),
+							res.getString("fullName"), res.getString("email"), res.getString("images"),
+							res.getInt("roleId"), res.getString("phone"), res.getDate("createDate"));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,79 +94,132 @@ public class UserDaoImpl extends DBConnectMySQL implements IUserDao {
 		return null;
 	}
 
+	@Override
+	public boolean checkExistEmail(String email) {
+		String query = "SELECT 1 FROM users WHERE email = ?";
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
 
-//	public boolean login(String username, String password) {
-//		String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-//		try {
-//			UserDaoImpl usersDao = new UserDaoImpl();
-//			boolean user = usersDao.findByUserName(username);
-//			if (user == false) {
-//				throw new Exception("User not found.");
-//			} else if (username != null && password != null) {
-//				conn = super.getDatabaseConnection();
-//				preparedStatement = conn.prepareStatement(sql);
-//				preparedStatement.setString(1, username);
-//				preparedStatement.setString(2, password);
-//				resultSet = preparedStatement.executeQuery();
-//				if (resultSet.next()) {
-//					return true;
-//				}
-//			} else if (username == null || password == null) {
-//				throw new Exception("Username or password is null.");
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
+			ps.setString(1, email);
+			try (ResultSet res = ps.executeQuery()) {
+				return res.next();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
 
+	@Override
+	public boolean checkExistUsername(String username) {
+		String query = "SELECT 1 FROM users WHERE username = ?";
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+			ps.setString(1, username);
+			try (ResultSet res = ps.executeQuery()) {
+				return res.next();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkExistPhone(String phone) {
+		String query = "SELECT 1 FROM users WHERE phone = ?";
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+			ps.setString(1, phone);
+			try (ResultSet res = ps.executeQuery()) {
+				return res.next();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public UserModel findOne(String username) {
+		String sql = "SELECT  id, username, password, fullname, email, images, roleId, phone, createDate FROM users WHERE username = ?";
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, username);
+			try (ResultSet res = ps.executeQuery()) {
+				if (res.next()) {
+					return new UserModel(
+							res.getInt("id"),
+							res.getString("username"), 
+							res.getString("password"),
+							res.getString("fullName"), 
+							res.getString("email"), 
+							res.getString("images"),
+							res.getInt("roleId"), 
+							res.getString("phone"), 
+							res.getDate("createDate"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean updatePassword(String username, String newPassword) {
+		String sql = "UPDATE users SET password = ? WHERE username = ?";
+		try (Connection conn = super.getDatabaseConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, newPassword); 
+			ps.setString(2, username);
+			int updated = ps.executeUpdate();
+			return updated > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public void insertRegister(UserModel user) {
+		String sqlInsert = "INSERT INTO users(username, password, fullname, email, status, roleid, code) VALUES(?,?,?,?,?,?,?)";
+		try (Connection conn = super.getDatabaseConnection(); 
+				PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
+			System.out.println(user.getStatus());
+			ps.setString(1, user.getUsername());
+			ps.setString(2, user.getPassword());
+			ps.setString(3, user.getFullName());
+			ps.setString(4, user.getEmail());
+			ps.setInt(5, user.getStatus());
+			ps.setInt(6, user.getRoleId());
+			ps.setString(7, user.getCode());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void updateStatus(UserModel user) {
+		String sql = "UPDATE users SET status=?, code=? WHERE email = ?";
+		
+		try(Connection conn = super.getDatabaseConnection(); 
+				PreparedStatement ps = conn.prepareStatement(sql);) {
+			ps.setInt(1, user.getStatus());
+			ps.setString(2, user.getCode());
+			ps.setString(3, user.getEmail());
+			ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public static void main(String[] args) {
-		UserDaoImpl usersDao = new UserDaoImpl();
-//        usersDao.insert(new UserModel("Thao","@","10","4","5"));
-//        usersDao.insert(new UserModel("Thu","@","11","12","13"));
-//        usersDao.insert(new UserModel("Thuy","@","14","15","16"));
 
-//        List<UserModel> users = usersDao.findAll();
-//        
-//        for (UserModel user : users) {
-//            System.out.println(user);
-//        }
+	}
 
-		// UserModel user = usersDao.findById(1);
-		// System.out.println(user);
-
-//		UserDaoImpl checkLogin = new UserDaoImpl();
-//		System.out.println(checkLogin.login("Thao", "10"));
-	//}
-//        UserModel user = usersDao.get("quynh");
-//        System.out.println(user);
-}
-
-	//@Override
-//	public UserModel findByUserName(String username) {
-//		String sql = "SELECT * FROM users WHERE username = ? ";
-//		// UserModel user = new UserModel();
-//		try {
-//			conn = super.getDatabaseConnection();
-//			preparedStatement = conn.prepareStatement(sql);
-//			resultSet = preparedStatement.executeQuery();
-//			preparedStatement.setString(1, username);
-//			while (resultSet.next()) {
-//				UserModel user = new UserModel();
-//				user.setId(resultSet.getInt("id"));
-//				user.setUsername(resultSet.getString("username"));
-//				user.setPassword(resultSet.getString("password"));
-//				user.setFullname(resultSet.getString("fullname"));
-//				user.setImages(resultSet.getString("images"));
-//				user.setEmail(resultSet.getString("email"));
-//				user.setRoleid(Integer.parseInt(resultSet.getString("roleid")));
-//				return user;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//
-//		}
-//		return null;
-//	}
-
+	
 }

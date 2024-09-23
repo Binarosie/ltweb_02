@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 <html>
 <head>
-    <title>Title</title>
+    <title>Login</title>
     <style type="text/css">
         /* Bordered form */
         form {
@@ -77,11 +80,19 @@
     </style>
 </head>
 <body>
-<form action="/JDBC/login" method="post">
-    <div class="imgcontainer">
-        <img src="img_avatar2.png" alt="Avatar" class="avatar">
+<form action="/ltwebct5/login" method="post">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <c:if test="${not empty alert}">
+                    <div class="alert alert-success">${alert}</div>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger">${error}</div>
+                </c:if>
+            </div>
+        </div>
     </div>
-
     <div class="container">
         <label for="uname"><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>
@@ -97,7 +108,7 @@
 
     <div class="container" style="background-color:#f1f1f1">
         <button type="button" class="cancelbtn">Cancel</button>
-        <span class="psw">Forgot <a href="#">password?</a></span>
+        <span class="psw"><a href="${pageContext.request.contextPath}/forgotPassword">Forgot password?</a></span>
     </div>
 </form>
 </body>

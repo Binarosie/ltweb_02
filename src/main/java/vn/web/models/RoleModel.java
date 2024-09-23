@@ -1,20 +1,29 @@
 package vn.web.models;
 
-public class RoleModel {
-	private String roleid;
+import java.io.Serializable;
+
+public class RoleModel implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int roleid;
 	private String roleName;
 	
-	public RoleModel(String roleid, String roleName) {
+	public RoleModel() { }
+
+	public RoleModel(int roleid, String roleName) {
 		super();
 		this.roleid = roleid;
 		this.roleName = roleName;
 	}
 
-	public String getRoleid() {
+	public int getRoleid() {
 		return roleid;
 	}
 
-	public void setRoleid(String roleid) {
+	public void setRoleid(int roleid) {
 		this.roleid = roleid;
 	}
 
@@ -26,15 +35,4 @@ public class RoleModel {
 		this.roleName = roleName;
 	}
 
-	public RoleModel() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public String toString() {
-		return "RoleModel [roleid=" + roleid + ", roleName=" + roleName + "]";
-	}
-	
-	
 }
