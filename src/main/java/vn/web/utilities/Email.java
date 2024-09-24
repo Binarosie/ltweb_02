@@ -1,6 +1,5 @@
 package vn.web.utilities;
 
-import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.Random;
 
@@ -10,8 +9,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-
 
 import vn.web.models.UserModel;
 

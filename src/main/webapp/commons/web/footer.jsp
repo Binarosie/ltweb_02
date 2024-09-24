@@ -20,4 +20,4 @@
             <!-- END PAYMENTS -->
         </div>
     </div>
-</div>
+</div>/html>
