@@ -28,5 +28,5 @@ List<UserModel> findAll();
 	
 	boolean updatePassword(String username, String newPassword);
 	
-	
+	boolean update(UserModel user);
 }

@@ -41,6 +41,7 @@
     <link href="${URL}assets/global/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet">
     <link href="${URL}assets/global/plugins/carousel-owl-carousel/owl-carousel/owl.carousel.css" rel="stylesheet">
     <link href="${URL}assets/global/plugins/slider-layer-slider/css/layerslider.css" rel="stylesheet">
+    <link href="${URL}assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css">
     <!-- Page level plugin styles END -->
 
     <!-- Theme styles START -->
@@ -292,6 +293,7 @@
 <script src="${URL}assets/global/plugins/carousel-owl-carousel/owl-carousel/owl.carousel.min.js" type="text/javascript"></script><!-- slider for products -->
 <script src='${URL}assets/global/plugins/zoom/jquery.zoom.min.js' type="text/javascript"></script><!-- product zoom -->
 <script src="${URL}assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js" type="text/javascript"></script><!-- Quantity -->
+<script src="${URL}assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
 
 <!-- BEGIN LayerSlider -->
 <script src="${URL}assets/global/plugins/slider-layer-slider/js/greensock.js" type="text/javascript"></script><!-- External libraries: GreenSock -->
@@ -308,6 +310,7 @@
         LayersliderInit.initLayerSlider();
         Layout.initImageZoom();
         Layout.initTouchspin();
+        Layout.initUniform();
         Layout.initTwitter();
 
         Layout.initFixHeaderWithPreHeader();

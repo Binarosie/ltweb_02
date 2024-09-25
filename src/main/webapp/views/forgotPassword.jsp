@@ -80,7 +80,7 @@
     </style>
 </head>
 <body>
-<form action="/ltwebct5/forgotPassword" method="post">
+<form action="/JBDC/forgotPassword" method="post">
     <div class="container">
         <div class="row">
             <div class="col">

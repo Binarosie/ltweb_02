@@ -220,6 +220,24 @@ public class UserDaoImpl extends DBConnectMySQL implements IUserDao {
 	public static void main(String[] args) {
 
 	}
-
+	
+	@Override
+	public boolean update(UserModel user) {
+		String sql = "UPDATE users SET fullName = ?, images = ?, phone = ? WHERE id = ?";
+		try(Connection conn = super.getDatabaseConnection(); 
+				PreparedStatement ps = conn.prepareStatement(sql);) {
+			ps.setString(1, user.getFullName());
+			ps.setString(2, user.getImages());
+			ps.setString(3, user.getPhone());
+			ps.setInt(4, user.getId());
+			ps.executeUpdate();
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 	
 }

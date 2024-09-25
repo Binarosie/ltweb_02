@@ -11,7 +11,7 @@
 	<span>Xin vui lòng kiểm tra mail của bạn</span>
 	<br />
 	<div>
-		<form action="/ltwebct5/verifyCode" method="post">
+		<form action="/JBDC/verifyCode" method="post">
 			<div class="container">
 				<label for="uname"><b>Your code</b></label> 
 				<input type="text"

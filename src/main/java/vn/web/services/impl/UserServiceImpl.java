@@ -9,109 +9,120 @@ import vn.web.models.UserModel;
 import vn.web.services.IUserService;
 
 public class UserServiceImpl implements IUserService {
+	
 	// get all methods from UserDAO
-		IUserDao userDAO = new UserDaoImpl();
+	IUserDao userDAO = new UserDaoImpl();
 
-		@Override
-		public UserModel login(String username, String password) {
-			UserModel user = this.findByUserName(username);
-			if(user != null && password.equals(user.getPassword())) {
-				return user;
-			}
-			return null;
+	@Override
+	public UserModel login(String username, String password) {
+		UserModel user = this.findByUserName(username);
+		if(user != null && password.equals(user.getPassword())) {
+			return user;
 		}
+		return null;
+	}
 
-		@Override
-		public UserModel findByUserName(String username) {
-			return userDAO.findByUsername(username);
+	@Override
+	public UserModel findByUserName(String username) {
+		return userDAO.findByUsername(username);
+	}
+	
+	@Override
+	public UserModel findOne(String username) {
+		return userDAO.findOne(username);
+	}
+
+	@Override
+	public void insert(UserModel user) {
+		userDAO.insert(user);
+		
+	}
+
+	@Override
+	public boolean register(String username, String password, String fullName, String email, String images, String phone) {
+	    
+		if (this.checkExistUsername(username)) {
+	        return false;
+	    }
+		
+		if (this.checkExistEmail(email)) {
+			return false;
 		}
 		
-		@Override
-		public UserModel findOne(String username) {
-			return userDAO.findOne(username);
+		if (this.checkExistPhone(phone)) {
+			return false;
 		}
 
-		@Override
-		public void insert(UserModel user) {
-			userDAO.insert(user);
-			
-		}
+	    // Get the current date
+	    java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
 
-//		@Override
-//		public boolean register(String username, String password, String fullName, String email, String images, String phone) {
-//		    
-//			if (this.checkExistUsername(username)) {
-//		        return false;
-//		    }
-//			
-//			if (this.checkExistEmail(email)) {
-//				return false;
-//			}
-//			
-//			if (this.checkExistPhone(phone)) {
-//				return false;
-//			}
-	//
-//		    // Get the current date
-//		    java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
-	//
-//		  
-//		    userDAO.insert(new UserModel(username, password, fullName, email, images, 3, phone, date));
-	//
-//		    return true;
-//		}
+	  
+	    userDAO.insert(new UserModel(username, password, fullName, email, images, 3, phone, date));
 
-		@Override
-		public boolean checkExistEmail(String email) {
-			return userDAO.checkExistEmail(email);
-		}
+	    return true;
+	}
 
-		@Override
-		public boolean checkExistUsername(String username) {
-			return userDAO.checkExistUsername(username);
-		}
+	@Override
+	public boolean checkExistEmail(String email) {
+		return userDAO.checkExistEmail(email);
+	}
 
-		@Override
-		public boolean checkExistPhone(String phone) {
-			return userDAO.checkExistPhone(phone);
-		}
+	@Override
+	public boolean checkExistUsername(String username) {
+		return userDAO.checkExistUsername(username);
+	}
+
+	@Override
+	public boolean checkExistPhone(String phone) {
+		return userDAO.checkExistPhone(phone);
+	}
+	
+	@Override
+	public boolean updatePassword(String username, String newPassword) {
+		return userDAO.updatePassword(username, newPassword);
+	}
+	
+
+	@Override
+	public boolean register(String username, String password, String fullName, String email, String code) {
+		if (this.checkExistUsername(username)) {
+	        return false;
+	    }
 		
-		@Override
-		public boolean updatePassword(String username, String newPassword) {
-			return userDAO.updatePassword(username, newPassword);
+		if (this.checkExistEmail(email)) {
+			return false;
 		}
-		
+	  
+	    userDAO.insertRegister(new UserModel(username, password, fullName, email, 3, 0, code));
 
-		@Override
-		public boolean register(String username, String password, String fullName, String email, String code) {
-			if (this.checkExistUsername(username)) {
-		        return false;
-		    }
-			
-			if (this.checkExistEmail(email)) {
-				return false;
-			}
-		  
-		    userDAO.insertRegister(new UserModel(username, password, fullName, email, 3, 0, code));
+	    return true;
+	}
 
-		    return true;
-		}
-
-		@Override
-		public void updateStatus(UserModel user) {
-			userDAO.updateStatus(user);
-		}
-		
-		public static void main(String[] args) {
-		    UserServiceImpl userService = new UserServiceImpl();
-
-		    boolean isRegistered = userService.register("tnquynh", "123", "ok", "1qqqq", "111");
-		    if (isRegistered) {
-		        System.out.println("User registered successfully!");
-		    } else {
-		        System.out.println("Username already exists. Registration failed.");
-		    }
-
-		}
+	@Override
+	public void updateStatus(UserModel user) {
+		userDAO.updateStatus(user);
+	}
+	
+	@Override
+	public boolean update(UserModel user) {
+		return userDAO.update(user);
+	}
+	
+	public static void main(String[] args) {
+//	    UserServiceImpl userService = new UserServiceImpl();
+//
+//	    UserModel user = userService.findOne("userK");
+//	    
+//	    user.setFullName("Nguyễn Thị A");
+//	    
+//	    
+//	    boolean check = userService.update(user);
+//	    if (check) {
+//	        System.out.println("Successfully!");
+//	    } else {
+//	        System.out.println("Failed.");
+//	    }
 
 	}
+
+}
