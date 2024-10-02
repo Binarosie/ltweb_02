@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<form action="<c:url value="/admin/category/add"/>" method="post"
+<form action="<c:url value="/admin/category/insert"/>" method="post"
 	enctype='multipart/form-data'>
 	
 	<label for="categoryname">Category name:</label><br> <input
