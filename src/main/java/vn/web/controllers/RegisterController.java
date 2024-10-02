@@ -44,7 +44,7 @@ public class RegisterController extends HttpServlet {
 		req.getRequestDispatcher(Constant.REGISTER).forward(req, resp);
 	}
 
-//	@SuppressWarnings("static-access")
+	@SuppressWarnings("static-access")
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding("UTF-8");
@@ -54,7 +54,7 @@ public class RegisterController extends HttpServlet {
 		String password = req.getParameter("password");
 		String email = req.getParameter("email");
 		String fullName = req.getParameter("fullName");
-//		String images = req.getParameter("images");
+		String images = req.getParameter("images");
 //		String phone = req.getParameter("phone");
 
 		UserServiceImpl service = new UserServiceImpl();

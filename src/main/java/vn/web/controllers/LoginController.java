@@ -20,7 +20,25 @@ public class LoginController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+		HttpSession session = req.getSession(false);
+        if (session != null && session.getAttribute("username") != null) {
+            resp.sendRedirect(req.getContextPath() + "/home");
+            return;
+
+        }
+        // Check cookie
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("username")) {
+                    session = req.getSession(true);
+                    session.setAttribute("username", cookie.getValue());
+                    resp.sendRedirect(req.getContextPath() + "/home");
+                    return;
+                }
+            }
+        }
+        req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
 	}
 
 	@Override
